@@ -1,5 +1,9 @@
 package com.hackerearth
 
+import com.hackerearth.ContainsDuplicate.m
+
+import scala.collection.mutable
+
 object MaxBorders extends App {
 
 val tests=scala.io.StdIn.readLine().toInt
@@ -585,4 +589,53 @@ object shiftZeros extends App{
     }
   }
   println(nums.toList)
+}
+
+object StringReverse extends App {
+  var s: Array[Char]= Array('h','e','l','l')
+  var temp:Char=Char.MinValue
+  val up=s.length-1
+  for(i <- 0 to up/2){
+    var temp=s(i)
+    s(i)=s(up-i)
+    s(up-i)=temp
+  }
+  println(s.toList)
+}
+
+object WordsReverse extends App {
+  val i=new StringBuffer("Let's take LeetCode contest")
+  var start=0
+  var end=i.indexOf(" ",start)
+  while(end>=0){
+    i.replace(start,end,i.substring(start,end).reverse)
+    start=end+1
+    end=i.indexOf(" ",start)
+  }
+  i.replace(start,i.length(),i.substring(start,i.length()).reverse)
+  println(i.toString)
+}
+
+
+object ContainsDuplicate extends App {
+  val nums = Array(1,2,1,4)
+  var i=0
+  val up=nums.length-1
+  var m:mutable.Set[Int]=mutable.Set.empty
+  var dups=false
+  var rev=up-i
+  while(i<up && up-i-i>=0){
+    if(m.contains(nums(i))||m.contains(nums(up-i))){
+      dups=true;i=Int.MaxValue-1
+    } else{
+      m.add(nums(i))
+      if(i!=up-i && m.contains(nums(up-i))){
+        dups=true;i=Int.MaxValue-1
+      }else{
+        m.add(nums(up-i))
+      }
+    }
+    i+=1
+    }
+  println(dups)
 }
