@@ -639,3 +639,93 @@ object ContainsDuplicate extends App {
     }
   println(dups)
 }
+
+object BoxBlur extends App{
+  val image=Array(Array(7, 4, 0, 1),
+    Array(5, 6, 2, 2),
+  Array(6, 10, 7, 8),
+  Array(1, 4, 2, 0))
+  val r=image.length
+  val c=image(0).length
+  val radius=2
+  var op=Array.ofDim[Array[Int]](r-radius) //each column of size c-2
+
+  def getAvg(arr:Array[Array[Int]],r:Int,c:Int): Int ={
+    (arr(r-1)(c-1) + arr(r-1)(c) + arr(r)(c-1) + arr(r)(c) + arr(r+1)(c-1) + arr(r+1)(c)
+      +arr(r+1)(c+1)+ arr(r)(c+1)+ arr(r-1)(c+1))/9
+  }
+
+  for(i <- 1 to r-radius){
+    var inner=Array.ofDim[Int](c-radius)
+    for(j <- 1 to c-radius){
+      val ele=getAvg(image,i,j)
+      inner(j-1)=ele
+    }
+    op(i-1)=inner
+  }
+  op
+}
+
+object MineSweeper extends App{
+  val matrix:Array[Array[Boolean]]=Array(
+    Array(true,false),
+    Array(true,false),
+    Array(false,true),
+    Array(false,false),
+    Array(false,false)
+  )
+  var op:Array[Array[Int]]=Array.ofDim(matrix.length,matrix(0).length)
+  for(i <- 0 until matrix.length){
+    for(j <- 0 until matrix(0).length){
+      if(matrix(i)(j)){
+        for(k:Int <- i-1 to i+1 ){
+            for(l:Int <- j-1 to j+1 ){
+          if(k>=0 && k< matrix.length && l>=0 && l<matrix(0).length && (k,l)!=(i,j)){
+            op(k)(l) += 1
+          }
+        }
+        }
+      }
+    }
+  }
+op.foreach(x=>{x.foreach(y=>print(y+ " "));println()})
+}
+
+object ReplaceWithNext extends App{
+  val alph="abcdefghijklmnopqrstuvwxyz"
+  var inp="z"
+  var op=""
+  for(c <- inp){
+    op=op+alph.charAt(if(alph.indexOf(c)<25) alph.indexOf(c)+1 else 0)
+  }
+  println(op)
+}
+
+object SameColorChessSquare extends App{
+  val cell1="A1"
+  val cell2="C3"
+  val blackStartFiles="ACEG"
+  if(blackStartFiles.contains(cell1.charAt(0))){
+    if(blackStartFiles.contains(cell2.charAt(0))){
+      if((cell1.charAt(1).toString.toInt%2==0 && cell2.charAt(1).toString.toInt%2==0) || cell1.charAt(1).toString.toInt%2!=0 && cell2.charAt(1).toString.toInt%2!=0){
+        true
+      }else false
+    }else{
+      if((cell1.charAt(1).toString.toInt%2==0 && cell2.charAt(1).toString.toInt%2!=0) || cell1.charAt(1).toString.toInt%2!=0 && cell2.charAt(1).toString.toInt%2==0){
+        true
+      }else false
+    }
+  }
+  if(!blackStartFiles.contains(cell1.charAt(0))){
+    if(!blackStartFiles.contains(cell2.charAt(0))){
+      if((cell1.charAt(1).toString.toInt%2!=0 && cell2.charAt(1).toString.toInt%2!=0) || cell1.charAt(1).toString.toInt%2==0 && cell2.charAt(1).toString.toInt%2==0){
+        true
+      }else false
+    }else{
+      if((cell1.charAt(1).toString.toInt%2==0 && cell2.charAt(1).toString.toInt%2!=0) || cell1.charAt(1).toString.toInt%2!=0 && cell2.charAt(1).toString.toInt%2==0){
+        true
+      }else false
+    }
+  }
+
+}
