@@ -382,6 +382,34 @@ object RemoveNthNodeFromEnd extends App {
     println(head.x)
     head=head.next
   }
+
+  def removeNthFromEnd(head: ListNode, n: Int): ListNode = {
+    var prev:ListNode=null
+    var curr=head
+    var next=curr.next
+    while(curr!=null){
+      //check that current node is last numth Node
+      var temp=curr
+      var i=0
+      while(temp!=null && i<n) {
+        temp = temp.next
+        i=i+1
+      }
+      if(i==n && temp==null){
+        if(prev!=null){
+          prev.next=curr.next
+          curr=null
+        }else{
+          return curr.next
+        }
+      }else{
+        prev=curr
+        curr=curr.next
+        next=if(curr!=null) curr.next else null
+      }
+    }
+    head
+  }
 }
 
 object numberMAp extends App {
@@ -728,4 +756,49 @@ object SameColorChessSquare extends App{
     }
   }
 
+}
+
+object MiddleOfLinkedList extends App {
+  val head= new ListNode(1,new ListNode(2,new ListNode(3,new ListNode(4,new ListNode(5,new ListNode(6,null))))))
+  var slow=head
+  var fast=head.next
+  while(fast!=null){
+    slow=slow.next
+    if(fast.next!=null){
+      fast=fast.next.next
+    }else{
+      fast=fast.next
+    }
+  }
+  slow
+}
+
+object lengthOfLongestSubstring extends App{
+val s="dvdf"
+var offset=0
+var maxLength=if (s.length>1) 0 else s.length
+val l=s.length
+var i=0
+while(i<l){
+  if(s.substring(offset,i).contains(s.charAt(i))){
+    offset=offset+1
+    i=offset
+  }else{
+    i=i+1
+    if(maxLength<s.substring(offset,i).length){
+      maxLength=s.substring(offset,i).length
+    }
+  }
+}
+ println(maxLength)
+}
+
+
+object checkInclusion extends App{
+  val s1: String="ab"
+  val s2: String="eidboaoo"
+  if(s1.length>s2.length) println(false)
+  else {
+    if(s2.sorted.contains(s1.sorted)) println(true) else false
+  }
 }
