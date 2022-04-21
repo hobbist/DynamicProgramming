@@ -1,6 +1,8 @@
 package com.hackerearth
 
+import com.hackerearth.CheckMaxIslandArea.{calculateArea, matrix, maxArea, visited}
 import com.hackerearth.ContainsDuplicate.m
+import com.hackerearth.FloodFill.{image, startColor}
 
 import scala.collection.mutable
 
@@ -307,7 +309,9 @@ object removeDuplicatesInList extends App{
    var value: Int = _value
    var left: TreeNode = _left
    var right: TreeNode = _right
-   }
+   var next: TreeNode = null
+   override def toString: String = s"${this.value} ${if(this.left!=null) "\n"+this.left.toString else null} ${if(this.right!=null) "\t\n"+this.right.toString else null}"
+ }
 
 object TreeInorderTraversal extends App{
   var l:List[Int]= List.empty[Int]
@@ -802,3 +806,124 @@ object checkInclusion extends App{
     if(s2.sorted.contains(s1.sorted)) println(true) else false
   }
 }
+
+object FloodFill extends App{
+  var image = Array(Array(1,1,1),Array(1,1,0),Array(1,0,1))
+  val sr = 1
+  val sc = 1
+  val newColor = 2
+  var visited:scala.collection.mutable.Set[(Int,Int)]=mutable.Set.empty
+  val startColor=image(sr)(sc)
+  changeColor(image,(sr,sc),newColor,startColor,visited)
+  def changeColor(image:Array[Array[Int]],location:(Int,Int),newColor:Int,startColor:Int, visited:scala.collection.mutable.Set[(Int,Int)]): Array[Array[Int]] ={
+      visited.add(location)
+      image(location._1)(location._2)=newColor
+      val up=(location._1-1,location._2)
+      val down=(location._1+1,location._2)
+      val left=(location._1,location._2-1)
+      val right=(location._1,location._2+1)
+      if(up._1>=0 && !visited.contains(up) && image(up._1)(up._2)==startColor) changeColor(image,up,newColor,startColor,visited)
+      if(down._1<image.length && !visited.contains(down) && image(down._1)(down._2)==startColor) changeColor(image,down,newColor,startColor,visited)
+      if(left._2>=0 && !visited.contains(left) && image(left._1)(left._2)==startColor) changeColor(image,left,newColor,startColor,visited)
+      if(right._2<image(0).length && !visited.contains(right) && image(right._1)(right._2)==startColor) changeColor(image,right,newColor,startColor,visited)
+    image
+  }
+  image.foreach(x=>{x.foreach(y=>print(y+" "));println()})
+}
+
+object CheckMaxIslandArea extends App{
+  val matrix=Array(Array(0,0,1,0,0,0,0,1,0,0,0,0,0),Array(0,0,0,0,0,0,0,1,1,1,0,0,0),Array(0,1,1,0,1,0,0,0,0,0,0,0,0),Array(0,1,0,0,1,1,0,0,1,0,1,0,0),
+    Array(0,1,0,0,1,1,0,0,1,1,1,0,0),Array(0,0,0,0,0,0,0,0,0,0,1,0,0),Array(0,0,0,0,0,0,0,1,1,1,0,0,0),Array(0,0,0,0,0,0,0,1,1,0,0,0,0))
+
+  var maxArea=0
+  var visited:scala.collection.mutable.Set[(Int,Int)]=mutable.Set.empty
+  for(i<- 0 until matrix.length){
+    for(j<- 0 until matrix(i).length){
+      if(!visited.contains((i,j)) && matrix(i)(j)==1){
+        val islandArea=calculateArea(matrix,(i,j),visited,0)
+        if(islandArea>maxArea) maxArea=islandArea
+        println(maxArea)
+      }
+    }
+  }
+
+  def calculateArea(matrix:Array[Array[Int]], location:(Int,Int), visited:scala.collection.mutable.Set[(Int,Int)], area:Int): Int ={
+    visited.add(location)
+    var subArea=1
+    val up=(location._1-1,location._2)
+    val down=(location._1+1,location._2)
+    val left=(location._1,location._2-1)
+    val right=(location._1,location._2+1)
+    if(up._1>=0 && !visited.contains(up) && matrix(up._1)(up._2)==1) subArea=subArea+calculateArea(matrix,up,visited,subArea)
+    if(down._1<matrix.length && !visited.contains(down) && matrix(down._1)(down._2)==1) subArea=subArea+calculateArea(matrix,down,visited,subArea)
+    if(left._2>=0 && !visited.contains(left) && matrix(left._1)(left._2)==1) subArea=subArea+calculateArea(matrix,left,visited,subArea)
+    if(right._2<matrix(0).length && !visited.contains(right) && matrix(right._1)(right._2)==1) subArea=subArea+calculateArea(matrix,right,visited,subArea)
+    subArea
+  }
+}
+
+
+object MergeTwoBinaryTrees extends App{
+  val root1=new TreeNode(1,new TreeNode(3,new TreeNode(5)),new TreeNode(2))
+  val root2=new TreeNode(2,new TreeNode(1,_right = new TreeNode(4)),new TreeNode(3,_right = new TreeNode(7)))
+  merge(root1,root2)
+  def merge(t1:TreeNode,t2:TreeNode): TreeNode ={
+    if(t1==null) t2
+    else if(t2==null) t1
+    else {
+      t1.value = t1.value + t2.value
+      t1.left = merge(t1.left, t2.left)
+      t1.right = merge(t1.right, t2.right)
+      t1
+    }
+  }
+  println(root1.toString)
+}
+
+object Connect extends App{
+  def connectNext(treeNode: TreeNode,next:TreeNode): Unit ={
+  if(next!=null) treeNode.next=next
+  if(treeNode.left!=null) connectNext(treeNode.left,treeNode.right)
+  if(treeNode.right!=null) connectNext(treeNode.right,if(treeNode.next!=null)treeNode.next.left else null)
+  }
+}
+
+object RecordDistanceZero extends App{
+  var mat = Array(Array(0,0,0),Array(0,1,0),Array(1,1,1))
+  updateMatrix(mat)
+  def updateMatrix(mat: Array[Array[Int]]): Array[Array[Int]] = {
+    var visitedDistences:scala.collection.mutable.Map[(Int,Int),Int]=mutable.Map.empty
+    var onGoing:scala.collection.mutable.Set[(Int,Int)]=mutable.Set.empty
+    for(i<- 0 until mat.length) {
+      for (j <- 0 until mat(i).length) {
+          mat(i)(j)=recordDistance(mat,(i,j),visitedDistences,onGoing)
+      }
+    }
+    mat.foreach(x=>{x.foreach(y=>print(y + " "));println()})
+    println(visitedDistences)
+    println(onGoing)
+    mat
+  }
+
+  def recordDistance(mat:Array[Array[Int]],location:(Int,Int),visited:scala.collection.mutable.Map[(Int,Int),Int],onGoing:scala.collection.mutable.Set[(Int,Int)]): Int ={
+    onGoing.add(location)
+    if(visited.contains(location)) {}
+    else if(mat(location._1)(location._2)==0){visited.put(location,0)}
+    else {
+      val up = (location._1 - 1, location._2)
+      val down = (location._1 + 1, location._2)
+      val left = (location._1, location._2 - 1)
+      val right = (location._1, location._2 + 1)
+      val upD = if (up._1 >= 0 && !onGoing.contains(up)) recordDistance(mat, up, visited,onGoing) else Integer.MAX_VALUE
+      val downD = if (down._1 < mat.length && !onGoing.contains(down)) recordDistance(mat, down, visited,onGoing) else Integer.MAX_VALUE
+      val leftD = if (left._2 >= 0 && !onGoing.contains(left)) recordDistance(mat, left, visited,onGoing) else Integer.MAX_VALUE
+      val rightD = if (right._2 < mat(0).length && !onGoing.contains(right)) recordDistance(mat, right, visited,onGoing) else Integer.MAX_VALUE
+      val minDistance=Math.min(Math.min(upD,downD),Math.min(leftD,rightD))
+      val distance=if(minDistance<Integer.MAX_VALUE) minDistance+1 else -1
+      visited.put(location, distance)
+    }
+    onGoing.remove(location)
+    visited.get(location).get
+  }
+
+  }
