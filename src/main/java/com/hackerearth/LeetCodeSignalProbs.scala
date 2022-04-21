@@ -892,11 +892,19 @@ object RecordDistanceZero extends App{
   var mat = Array(Array(0,0,0),Array(0,1,0),Array(1,1,1))
   updateMatrix(mat)
   def updateMatrix(mat: Array[Array[Int]]): Array[Array[Int]] = {
-    var visitedDistences:scala.collection.mutable.Map[(Int,Int),Int]=mutable.Map.empty
-    var onGoing:scala.collection.mutable.Set[(Int,Int)]=mutable.Set.empty
+    var visitedDistences:scala.collection.mutable.Map[(Int,Int),Int]=scala.collection.mutable.Map.empty
+    var onGoing:scala.collection.mutable.Set[(Int,Int)]=scala.collection.mutable.Set.empty
     for(i<- 0 until mat.length) {
       for (j <- 0 until mat(i).length) {
-          mat(i)(j)=recordDistance(mat,(i,j),visitedDistences,onGoing)
+        mat(i)(j)=recordDistance(mat,(i,j),visitedDistences,onGoing,true)
+      }
+    }
+    visitedDistences=scala.collection.mutable.Map.empty
+    onGoing=scala.collection.mutable.Set.empty
+    mat.foreach(x=>{x.foreach(y=>print(y + " "));println()})
+    for(i<- 0 until mat.length) {
+      for (j <- 0 until mat(i).length) {
+        mat(i)(j)=recordDistance(mat,(i,j),visitedDistences,onGoing,false)
       }
     }
     mat.foreach(x=>{x.foreach(y=>print(y + " "));println()})
@@ -905,25 +913,34 @@ object RecordDistanceZero extends App{
     mat
   }
 
-  def recordDistance(mat:Array[Array[Int]],location:(Int,Int),visited:scala.collection.mutable.Map[(Int,Int),Int],onGoing:scala.collection.mutable.Set[(Int,Int)]): Int ={
+  def recordDistance(mat:Array[Array[Int]],location:(Int,Int),visited:scala.collection.mutable.Map[(Int,Int),Int],onGoing:scala.collection.mutable.Set[(Int,Int)],onlyUp:Boolean): Int ={
     onGoing.add(location)
     if(visited.contains(location)) {}
     else if(mat(location._1)(location._2)==0){visited.put(location,0)}
     else {
-      val up = (location._1 - 1, location._2)
-      val down = (location._1 + 1, location._2)
-      val left = (location._1, location._2 - 1)
-      val right = (location._1, location._2 + 1)
-      val upD = if (up._1 >= 0 && !onGoing.contains(up)) recordDistance(mat, up, visited,onGoing) else Integer.MAX_VALUE
-      val downD = if (down._1 < mat.length && !onGoing.contains(down)) recordDistance(mat, down, visited,onGoing) else Integer.MAX_VALUE
-      val leftD = if (left._2 >= 0 && !onGoing.contains(left)) recordDistance(mat, left, visited,onGoing) else Integer.MAX_VALUE
-      val rightD = if (right._2 < mat(0).length && !onGoing.contains(right)) recordDistance(mat, right, visited,onGoing) else Integer.MAX_VALUE
-      val minDistance=Math.min(Math.min(upD,downD),Math.min(leftD,rightD))
-      val distance=if(minDistance<Integer.MAX_VALUE) minDistance+1 else -1
+      var minDistance= Integer.MAX_VALUE
+      var distance=Integer.MAX_VALUE
+      if (onlyUp) {
+        val up = (location._1 - 1, location._2)
+        val left = (location._1, location._2 - 1)
+        val upD = if (up._1 >= 0 && !onGoing.contains(up)) recordDistance(mat, up, visited, onGoing,true) else Integer.MAX_VALUE
+        val leftD = if (left._2 >= 0 && !onGoing.contains(left)) recordDistance(mat, left, visited,onGoing,true) else Integer.MAX_VALUE
+        minDistance=Math.min(upD,leftD)
+        distance=if(minDistance<Integer.MAX_VALUE) minDistance+1 else Integer.MAX_VALUE
+      }else{
+        val thisLow=mat(location._1)(location._2)
+        val down = (location._1 + 1, location._2)
+        val right = (location._1, location._2 + 1)
+        val downD = if (down._1 < mat.length && !onGoing.contains(down)) recordDistance(mat, down, visited, onGoing,false) else Integer.MAX_VALUE
+        val rightD = if (right._2 < mat(0).length && !onGoing.contains(right)) recordDistance(mat, right, visited,onGoing,false) else Integer.MAX_VALUE
+        minDistance=Math.min(Math.min(downD,rightD),thisLow)
+        distance=if(minDistance<Integer.MAX_VALUE && minDistance<thisLow) minDistance+1 else thisLow
+      }
       visited.put(location, distance)
     }
     onGoing.remove(location)
     visited.get(location).get
   }
+
 
   }
