@@ -1,8 +1,8 @@
-package com.hackerearth
+package com.problemsolving
 
-import com.hackerearth.CheckMaxIslandArea.{calculateArea, matrix, maxArea, visited}
-import com.hackerearth.ContainsDuplicate.m
-import com.hackerearth.FloodFill.{image, startColor}
+import com.problemsolving.CheckMaxIslandArea.{calculateArea, matrix, maxArea, visited}
+import com.problemsolving.ContainsDuplicate.m
+import com.problemsolving.FloodFill.{image, startColor}
 
 import scala.collection.mutable
 
