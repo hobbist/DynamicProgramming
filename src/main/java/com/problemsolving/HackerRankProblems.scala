@@ -141,11 +141,92 @@ object HackerRankProblems extends App {
     if(m.size==26)"pangram" else "not pangram"
   }
 
+  def extraLongFactorials(n: Int) {
+    val arr=Array.ofDim[BigInt](n+1)
+    for(i<- 0 to n){
+      if(i==0) arr(i)=1
+      else arr(i)=arr(i-1)*i
+    }
+    println(arr(arr.length-1))
+  }
+
+  def migratoryBirds(arr: Array[Int]) = {
+    val sightings = scala.collection.mutable.Map.empty[Int,Int]
+    var maxSightNum = 6
+    var maxSightOccurance = 0
+    for (ele <- arr) {
+      val occu = sightings.getOrElse(ele,0)+1
+      sightings.put(ele, occu)
+      if (occu >= maxSightOccurance) {
+        if (occu == maxSightOccurance && ele <= maxSightNum) maxSightNum = ele
+        else if(occu>maxSightOccurance) maxSightNum = ele
+        maxSightOccurance = occu
+      }
+    }
+    maxSightNum
+  }
+
+  def formingMagicSquare(s: Array[Array[Int]]): Int = {
+    // Write your code here
+    val m=scala.collection.mutable.Map.empty[Int,Int]
+    (1 to s.length*s(0).length).foreach(i=> m.put(i,0))
+    var repeat=scala.collection.immutable.List.empty[Int]
+    for(i<- 0 until s.length){
+      for(j<- 0 until s(i).length){
+        val occu=m.get(s(i)(j)).get+1
+        m.put(s(i)(j),occu)
+        if(occu>1) repeat=s(i)(j) :: repeat
+      }
+    }
+    val missing=m.filter(x=> x._2==0).map(y=>y._1).toList
+    repeat.sorted
+    missing.sorted
+    var minCost=0
+    println(repeat)
+    println(missing)
+    for(i<- 0 until repeat.length){
+      minCost= minCost + (repeat(i) - missing(i)).abs
+    }
+    println(minCost)
+    minCost
+  }
+
+  def encrypt(s:String="haveaniceday"):String= {
+    val s2=s.replace(" ","")
+    val r=math.sqrt(s2.length).floor.toInt
+    val c=math.sqrt(s2.length).ceil.toInt
+    val mat=scala.collection.mutable.ArrayBuffer.empty[String]
+    var i=0
+    var offset=0
+    while(i<=r){
+      offset=i*c
+      if(offset<s2.length) {
+       mat.+=(s2.substring(offset, if (offset + c < s2.length) offset + c else s2.length).padTo(c, " ").mkString(""))
+      }
+      i=i+1
+    }
+    val sbM=new mutable.StringBuilder()
+    for(l<- 0 until c) {
+      val sb=new mutable.StringBuilder()
+      for (k <- 0 until mat.length) {
+        sb.append(mat(k)(l))
+      }
+      sbM.append(sb.toString().trim).append(" ")
+    }
+    println(sbM.toString().trim)
+    ""
+  }
+
 
   val mat=Array(Array(11,2,4),Array(4,5,6),Array(10, 8, -12))
   val ar=Array(-4, 3, -9, 0, 4, 1)
   //println(diagonalDifference(mat))
   //plusMinus(ar)
   //staircase(6)
-  tallestCandles
+  //tallestCandles
+  //extraLongFactorials(30)
+  //migratoryBirds(Array(1 ,2, 3, 4, 5, 4, 3, 2, 1, 3, 4))
+  //formingMagicSquare(Array(Array(4, 5, 8),Array(2, 4, 1),Array(1, 9, 7)))
+
+  encrypt("feedthedog")
 }
