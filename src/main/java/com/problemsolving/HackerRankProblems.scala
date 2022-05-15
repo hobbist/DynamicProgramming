@@ -217,6 +217,92 @@ object HackerRankProblems extends App {
     ""
   }
 
+  def climbingLeaderboard(ranked: Array[Int], player: Array[Int]): Array[Int] = {
+    // Write your code here
+    var op=Array.ofDim[Int](player.length)
+    var i=player.length-1
+    var j=0
+    var rank=1
+    while(i>=0){
+      if(j<ranked.length && player(i)>=ranked(j)){
+        op(i)=rank
+        i=i-1
+      }else{
+        j=j+1
+        while(j<ranked.length && ranked(j-1)==ranked(j)){
+          j=j+1;
+        }
+        if(j<ranked.length){rank=rank+1}
+        else {op(i)=rank+1; i=i-1}
+      }
+    }
+    op.foreach(println)
+    op
+  }
+
+  def gridSearch(G: Array[String], P: Array[String]): String = {
+    var gRow=0
+    var pRow=0
+    var pIndex = -1
+    var found=false
+    while(gRow<G.length && pRow<P.length){
+      var cIndex=G(gRow).indexOf(P(pRow),if(pIndex== -1) 0 else pIndex-1)
+      if(cIndex!= -1) {
+        if(pIndex== -1) {
+          pRow = pRow + 1
+          pIndex = cIndex
+          gRow = gRow + 1
+          found = true
+        }
+        else if(cIndex==pIndex) {
+          pRow = pRow + 1
+          pIndex = cIndex
+          gRow = gRow + 1
+          found = true
+        }else {
+          pRow=0;
+          pIndex= -1
+          found=false
+        }
+      }
+      else{
+        found=false
+        if(pRow!=0){pRow=0;pIndex= -1 }
+        else gRow=gRow+1
+      }
+    }
+    println(found)
+    if(found)"YES" else "NO"
+  }
+
+  def timeInWords(h: Int, m: Int): String = {
+    // Write your code here
+   //At 0 use o' clock.
+   //1 minute
+   //45,15 quarter
+   //30 half
+   val oClock="O'Clock"
+   val minute="minute"
+   val half="half"
+   val quarter="quarter"
+   var to=false
+   var min=m
+   var hr=h
+   var time=""
+   if(m>30){
+     min=60-m
+     to=true
+     hr=h+1
+   }
+
+   if(m==0) time=s"${h} $oClock"
+   if(to){
+     time = s"${if(min==15) quarter else min+" "+ minute}${if(min!=1 && min!=15) "s"} to ${hr}"
+   }else{
+     time = s"${if(min==15) quarter else min+" "+minute}${if(min!=1 && min!=15) "s"} past ${hr}"
+   }
+   time
+  }
 
   val mat=Array(Array(11,2,4),Array(4,5,6),Array(10, 8, -12))
   val ar=Array(-4, 3, -9, 0, 4, 1)
@@ -227,6 +313,18 @@ object HackerRankProblems extends App {
   //extraLongFactorials(30)
   //migratoryBirds(Array(1 ,2, 3, 4, 5, 4, 3, 2, 1, 3, 4))
   //formingMagicSquare(Array(Array(4, 5, 8),Array(2, 4, 1),Array(1, 9, 7)))
-
-  encrypt("feedthedog")
+  //encrypt("feedthedog")
+  //val ranks=Array(100, 90 ,90, 80 ,75 ,60)
+  //val player=Array(50, 65, 77, 90, 102)
+  val filename = "/home/kapil/workspace/DynamicProgramming/src/test/test.txt"
+  val rd=Source.fromFile(filename).bufferedReader()
+  val rankSize=rd.readLine().toInt
+  val ranks=rd.readLine().split(" ").map(x=>x.toInt)
+  val playerPoints=rd.readLine().toInt
+  val player=rd.readLine().split(" ").map(x=>x.toInt)
+  //climbingLeaderboard(ranks,player)
+  val G=Array("7283455864","6731158619","8988242643","3830589324","2229505813","5633845374","6473530293","7053106601","0834282956","4607924137")
+  val P=Array("9505","3845","3530")
+  //gridSearch(G,P)
+  println(timeInWords(5,13))
 }
