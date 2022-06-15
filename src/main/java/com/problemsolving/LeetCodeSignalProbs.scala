@@ -1,10 +1,13 @@
 package com.problemsolving
 
 import com.problemsolving.CheckMaxIslandArea.{calculateArea, matrix, maxArea, visited}
+import com.problemsolving.ClosestPlanest.distanceMaps
 import com.problemsolving.ContainsDuplicate.m
 import com.problemsolving.FloodFill.{image, startColor}
 
 import scala.collection.mutable
+import scala.reflect.ClassTag
+import com.dynamicp.adt.{ListNode,TreeNode}
 
 object MaxBorders extends App {
 
@@ -173,11 +176,6 @@ object validParanthesis extends App{
   println(!notBalanced && l.length==0)
 }
 
- case class ListNode(_x: Int = 0, _next: ListNode = null) {
-   var next: ListNode = _next
-   var x: Int = _x
- }
-
 object mergeList extends App{
   val list1:ListNode=null
   val list2:ListNode=null
@@ -304,14 +302,6 @@ object removeDuplicatesInList extends App{
   println(head)
 }
 
-
- case class TreeNode(_value: Int = 0, _left: TreeNode = null, _right: TreeNode = null) {
-   var value: Int = _value
-   var left: TreeNode = _left
-   var right: TreeNode = _right
-   var next: TreeNode = null
-   override def toString: String = s"${this.value} ${if(this.left!=null) "\n"+this.left.toString else null} ${if(this.right!=null) "\t\n"+this.right.toString else null}"
- }
 
 object TreeInorderTraversal extends App{
   var l:List[Int]= List.empty[Int]
@@ -913,34 +903,82 @@ object RecordDistanceZero extends App{
     mat
   }
 
-  def recordDistance(mat:Array[Array[Int]],location:(Int,Int),visited:scala.collection.mutable.Map[(Int,Int),Int],onGoing:scala.collection.mutable.Set[(Int,Int)],onlyUp:Boolean): Int ={
+  def recordDistance(mat:Array[Array[Int]],location:(Int,Int),visited:scala.collection.mutable.Map[(Int,Int),Int],onGoing:scala.collection.mutable.Set[(Int,Int)],onlyUp:Boolean): Int = {
     onGoing.add(location)
-    if(visited.contains(location)) {}
-    else if(mat(location._1)(location._2)==0){visited.put(location,0)}
+    if (visited.contains(location)) {}
+    else if (mat(location._1)(location._2) == 0) {
+      visited.put(location, 0)
+    }
     else {
-      var minDistance= Integer.MAX_VALUE
-      var distance=Integer.MAX_VALUE
+      var minDistance = Integer.MAX_VALUE
+      var distance = Integer.MAX_VALUE
       if (onlyUp) {
         val up = (location._1 - 1, location._2)
         val left = (location._1, location._2 - 1)
-        val upD = if (up._1 >= 0 && !onGoing.contains(up)) recordDistance(mat, up, visited, onGoing,true) else Integer.MAX_VALUE
-        val leftD = if (left._2 >= 0 && !onGoing.contains(left)) recordDistance(mat, left, visited,onGoing,true) else Integer.MAX_VALUE
-        minDistance=Math.min(upD,leftD)
-        distance=if(minDistance<Integer.MAX_VALUE) minDistance+1 else Integer.MAX_VALUE
-      }else{
-        val thisLow=mat(location._1)(location._2)
+        val upD = if (up._1 >= 0 && !onGoing.contains(up)) recordDistance(mat, up, visited, onGoing, true) else Integer.MAX_VALUE
+        val leftD = if (left._2 >= 0 && !onGoing.contains(left)) recordDistance(mat, left, visited, onGoing, true) else Integer.MAX_VALUE
+        minDistance = Math.min(upD, leftD)
+        distance = if (minDistance < Integer.MAX_VALUE) minDistance + 1 else Integer.MAX_VALUE
+      } else {
+        val thisLow = mat(location._1)(location._2)
         val down = (location._1 + 1, location._2)
         val right = (location._1, location._2 + 1)
-        val downD = if (down._1 < mat.length && !onGoing.contains(down)) recordDistance(mat, down, visited, onGoing,false) else Integer.MAX_VALUE
-        val rightD = if (right._2 < mat(0).length && !onGoing.contains(right)) recordDistance(mat, right, visited,onGoing,false) else Integer.MAX_VALUE
-        minDistance=Math.min(Math.min(downD,rightD),thisLow)
-        distance=if(minDistance<Integer.MAX_VALUE && minDistance<thisLow) minDistance+1 else thisLow
+        val downD = if (down._1 < mat.length && !onGoing.contains(down)) recordDistance(mat, down, visited, onGoing, false) else Integer.MAX_VALUE
+        val rightD = if (right._2 < mat(0).length && !onGoing.contains(right)) recordDistance(mat, right, visited, onGoing, false) else Integer.MAX_VALUE
+        minDistance = Math.min(Math.min(downD, rightD), thisLow)
+        distance = if (minDistance < Integer.MAX_VALUE && minDistance < thisLow) minDistance + 1 else thisLow
       }
       visited.put(location, distance)
     }
     onGoing.remove(location)
     visited.get(location).get
   }
-
-
   }
+
+object AllSubsets extends App{
+val ar=Array("a","b","c","d")
+powerSet(ar,-1,Array.empty[String])
+  def powerSet[T:ClassTag](str: Array[T], index: Int, curr: Array[T]): Unit = {
+    val n = str.length
+    if (index == n) return
+    println(curr.toList)
+    var i = index + 1
+    var newCurr=Array.empty[T]
+    while (i < n){
+      newCurr= curr :+ str(i)
+      powerSet(str, i, newCurr)
+      i+=1
+    }
+  }
+
+}
+
+
+object ClosestPlanest extends App{
+val planets=Array((1,1),(3,1),(-5,0))
+val k=2
+val start=(0,0)
+val distanceMaps:scala.collection.mutable.Map[Int,Array[(Int,Int)]]=scala.collection.mutable.Map.empty[Int,Array[(Int,Int)]]
+var distanceMapsOp:Array[(Int,Int)]=Array.empty[(Int,Int)]
+  for(p<-planets){
+    val dist=calculateDistance(p,start)
+    distanceMaps.put(dist,distanceMaps.getOrElse(dist,Array.empty[(Int,Int)]).:+(p))
+  }
+  var keys=distanceMaps.keySet.toList.sorted
+  var i=0
+  while(i<k && !keys.isEmpty){
+    val c=keys.head
+    if(distanceMaps.get(c).get.size<=k) {distanceMapsOp=distanceMapsOp ++  distanceMaps.get(c).get;i=i+distanceMaps.get(c).get.size}
+    else {
+      distanceMapsOp=distanceMapsOp ++ distanceMaps.get(c).get.slice(0,k);i=i+k;
+    }
+    keys=keys.tail
+  }
+distanceMapsOp.foreach(x=>println(s"${x._1} ${x._2}"))
+
+def calculateDistance(p1:(Int,Int),p2:(Int,Int)):Int={
+  import scala.math._;
+  sqrt(pow(p1._1-p2._1,2)+pow(p1._2-p2._2,2)).toInt
+}
+
+}

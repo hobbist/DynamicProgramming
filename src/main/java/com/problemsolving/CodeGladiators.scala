@@ -2,7 +2,7 @@ package com.problemsolving
 
 object CodeGladiators extends App{
 //missleTime
-  findModalValue
+  printToHundredWithoutNumbers
   def missleTime={
     val launchTime= scala.io.StdIn.readLine().split(" ").map(x=>x.toInt)
     val timespan=scala.io.StdIn.readLine().split(" ").map(x=>x.toInt)
@@ -81,5 +81,17 @@ object CodeGladiators extends App{
       map.put(ele,1 + map.getOrElse(ele,0.toDouble))
     }
     println(map.maxBy(x=>x._2)._1)
+  }
+
+  def printToHundredWithoutNumbers(): Unit ={
+    val one="t".length
+    val eight = one << one << one << one
+    val ten = eight+one+one
+    val hundred = ten * ten
+    var i=one
+    while(i<=hundred){
+      println(i)
+      i=i+one
+    }
   }
 }

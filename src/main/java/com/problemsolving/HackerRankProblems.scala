@@ -304,6 +304,51 @@ object HackerRankProblems extends App {
    time
   }
 
+  def countApplesAndOranges(s: Int, t: Int, a: Int, b: Int, apples: Array[Int], oranges: Array[Int]) {
+    println(apples.map(ap => a+ap).filter(p=> p>=s && p<= t).length)
+    println(oranges.map(or => b+or).filter(p=> p>=s && p<= t).length)
+  }
+
+  def sockMerchant(n: Int, ar: Array[Int]): Int = {
+   val map=scala.collection.mutable.Map.empty[Int,Int]
+   var pairs=0
+   ar.foreach(color=> {
+     val existing=map.getOrElse(color,0)
+     if(existing==0) map.put(color,1)
+     else if((existing+1)%2 == 0) {pairs=pairs+1;map.remove(color)}
+     else map.put(color,existing+1)
+   })
+   pairs
+  }
+
+  def findDigits(n: Int): Int = {
+  var l=new ListBuffer[Int]
+  n.toString.foreach(c=>{
+    val charInt=Integer.valueOf(c.toString)
+    if(charInt !=0 && n%charInt==0){
+       l.append(charInt)
+    }
+  })
+  l.length
+  }
+
+  def hurdleRace(k: Int, height: Array[Int]): Int = {
+    val max=height.max
+    if(max>k) max-k else 0
+  }
+
+  def circularArrayRotation(a: Array[Int], k: Int, queries: Array[Int]): Array[Int] = {
+    val rotationOffset=if(k<a.length) k else k%a.length
+    val eles=for(i<-queries) yield {
+      var finalEle=i+(rotationOffset-1)
+      if(finalEle>=a.length) finalEle=finalEle-a.length
+      if(rotationOffset==0) a(i)
+      else a(finalEle)
+    }
+    eles
+  }
+
+
   val mat=Array(Array(11,2,4),Array(4,5,6),Array(10, 8, -12))
   val ar=Array(-4, 3, -9, 0, 4, 1)
   //println(diagonalDifference(mat))
@@ -326,5 +371,44 @@ object HackerRankProblems extends App {
   val G=Array("7283455864","6731158619","8988242643","3830589324","2229505813","5633845374","6473530293","7053106601","0834282956","4607924137")
   val P=Array("9505","3845","3530")
   //gridSearch(G,P)
-  println(timeInWords(5,13))
+  //println(timeInWords(5,13))
+  println(findDigits(1012))
+}
+
+
+
+import java.io._
+import scala.io._
+
+object Result {
+  def circularArrayRotation(a: Array[Int], k: Int, queries: Array[Int]): Array[Int] = {
+    val rotationOffset=if(k<a.length) k else k%a.length
+    val eles=for(i<-queries) yield {
+      var finalEle=i+(rotationOffset-1)
+      if(finalEle>=a.length) finalEle=finalEle-a.length
+      if(rotationOffset==0) a(i)
+      else a(finalEle)
+    }
+    eles
+  }
+
+}
+
+object Solution {
+  def main(args: Array[String]) {
+    val printWriter = new PrintWriter(sys.env("OUTPUT_PATH"))
+    val firstMultipleInput = StdIn.readLine.replaceAll("\\s+$", "").split(" ")
+    val n = firstMultipleInput(0).toInt
+    val k = firstMultipleInput(1).toInt
+    val q = firstMultipleInput(2).toInt
+    val a = StdIn.readLine.replaceAll("\\s+$", "").split(" ").map(_.trim.toInt)
+    val queries = Array.ofDim[Int](q)
+    for (i <- 0 until q) {
+      val queriesItem = StdIn.readLine.trim.toInt
+      queries(i) = queriesItem
+    }
+    val result = Result.circularArrayRotation(a, k, queries)
+    printWriter.println(result.mkString("\n"))
+    printWriter.close()
+  }
 }
