@@ -348,6 +348,63 @@ object HackerRankProblems extends App {
     eles
   }
 
+  def kangaroo(x1: Int, v1: Int, x2: Int, v2: Int): String = {
+    // Write your code here
+    var r,q=0
+    if((v2-v1)!=0) {
+      r = (x1 - x2) % (v2 - v1)
+      q = (x1 - x2) / (v2 - v1)
+    }else {
+      if((x1-x2)==0){
+        r==0
+        q==1
+      }
+    }
+    if(r==0 && q>0) "YES" else "NO"
+  }
+
+  def pageCount(n: Int, p: Int): Int = {
+    // Write your code here
+    val pages=p/2
+    val last=n/2
+    min(pages,last-pages)
+  }
+
+  import java.util
+
+  //rotate array by k steps in right
+  def rotate(nums: util.List[Integer], offset: Int): util.List[Integer] = {
+    val output = new util.ArrayList[Integer](nums)
+    if (nums == null || nums.isEmpty || offset == 0 || offset == nums.size) return output
+    val size = nums.size
+    val finalOffset = offset % size
+    var i = 0
+    while ( i < nums.size) {
+      if (i + finalOffset > size - 1) output.set(i + finalOffset - size, nums.get(i))
+      else output.set(i + finalOffset, nums.get(i))
+      i += 1
+    }
+    output
+  }
+
+  def countNonRepeatingSubStrings(s:String,count:Int):Int={
+    var lCount=count
+    var map:scala.collection.mutable.LinkedHashMap[Char,Int]=scala.collection.mutable.LinkedHashMap.empty
+    var result=s.foreach(c=>{
+      map.update(c,map.get(c).getOrElse(0)+1)
+    })
+    val repeat=map.filter( x => x._2>1)
+    if(repeat.size==0) lCount=lCount+1
+    if(s.length>1) {
+      if(repeat.size>0){
+        lCount=countNonRepeatingSubStrings(s.substring(s.indexOf(repeat.head._1)+1,s.length),lCount)
+      }else {
+        lCount=countNonRepeatingSubStrings(s.substring(1,s.length),lCount)
+      }
+    }
+    lCount
+  }
+
 
   val mat=Array(Array(11,2,4),Array(4,5,6),Array(10, 8, -12))
   val ar=Array(-4, 3, -9, 0, 4, 1)
@@ -372,7 +429,15 @@ object HackerRankProblems extends App {
   val P=Array("9505","3845","3530")
   //gridSearch(G,P)
   //println(timeInWords(5,13))
-  println(findDigits(1012))
+  //println(findDigits(1012))
+  //kangaroo(0,3,4,2)
+  val s="bcada"
+  var i=0;
+  var count=0;
+  for(i<- 0 until s.length){
+    count=count+countNonRepeatingSubStrings(s.substring(0,i+1),0);
+  }
+  println(s"${count}")
 }
 
 

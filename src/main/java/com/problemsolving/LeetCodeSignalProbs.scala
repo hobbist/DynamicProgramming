@@ -980,5 +980,76 @@ def calculateDistance(p1:(Int,Int),p2:(Int,Int)):Int={
   import scala.math._;
   sqrt(pow(p1._1-p2._1,2)+pow(p1._2-p2._2,2)).toInt
 }
+}
 
+object distributeMinimumCandies{
+  def candy(ratings: Array[Int]): Int = {
+    var candies=Array.ofDim[Int](ratings.length)
+    for(i<- 0 until ratings.length){
+      if(i==0)candies(i)=1
+      else if(ratings(i)>ratings(i-1)) candies(i)=candies(i-1)+1
+      else{
+        if(candies(i-1)-1==0){
+          candies(i)=1
+          var j=i-1
+          while(j>=0 && ratings(j)>ratings(j+1) && candies(j)==candies(j+1)){
+            candies(j)=candies(j)+1
+            j=j-1
+          }
+        }else{
+          candies(i)=1
+        }
+      }
+    }
+    var total=0
+    candies.foreach(x=>{println(x);total=total+x})
+    total
+  }
+}
+
+
+object AddTwoNumbers extends App{
+  var r=addTwoNumbers(new ListNode(2,new ListNode(4,new ListNode(3))), new ListNode(5,new ListNode(6,new ListNode(4))))
+  while(r!=null){
+    println(r.x)
+    r=r.next
+  }
+  def addTwoNumbers(l1: ListNode, l2: ListNode): ListNode = {
+    var l1Local=l1
+    var l2Local=l2
+    var result:ListNode=null
+    var toGo=true
+    if(l1==null) result=l2
+    else if(l2==null) result=l1
+    else{
+      var current:ListNode=null
+      var carry=0
+      while(toGo){
+        var x,y,sum=0
+        if(l1Local!=null) {x=l1Local.x}
+        if(l2Local!=null) {y=l2Local.x}
+        sum = x + y + carry
+        if (sum >= 10) {
+          carry = 1
+          sum = sum % 10
+        }else carry=0
+        val sumNode = new ListNode(sum)
+        if (result == null) {
+          result = sumNode
+          current = result
+        } else {
+          current.next = sumNode
+          current = sumNode
+        }
+
+        if(l1Local!=null) l1Local=l1Local.next
+        if(l2Local!=null) l2Local=l2Local.next
+        if(l1Local==null && l2Local==null) toGo=false
+      }
+      if(carry!=0){
+        current.next = new ListNode(carry)
+      }
+    }
+    result
+  }
 }
