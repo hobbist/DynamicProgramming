@@ -1053,3 +1053,28 @@ object AddTwoNumbers extends App{
     result
   }
 }
+
+
+object findMaxArea extends App {
+  println(s"${maxArea(Array(8,20,1,2,3,4,5,6))}")
+  def maxArea(height: Array[Int]): Int = {
+    var maxArea = 0
+    var start=0
+    var end=height.length-1
+    while(start<end){
+      if(height(start)<height(end)){
+        maxArea=scala.math.max(maxArea,findArea((start,height(start)),(end,height(end))))
+        start+=1
+      }
+      else{
+        maxArea=scala.math.max(maxArea,findArea((start,height(start)),(end,height(end))))
+        end-=1
+      }
+    }
+    maxArea
+  }
+
+  def findArea(p:(Int,Int),q:(Int,Int)):Int={
+    scala.math.abs(q._1-p._1 )* scala.math.min(p._2,q._2)
+  }
+}

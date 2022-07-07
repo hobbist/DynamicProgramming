@@ -459,7 +459,7 @@ object Result {
 
 }
 
-object Solution {
+object Solution2 {
   def main(args: Array[String]) {
     val printWriter = new PrintWriter(sys.env("OUTPUT_PATH"))
     val firstMultipleInput = StdIn.readLine.replaceAll("\\s+$", "").split(" ")
