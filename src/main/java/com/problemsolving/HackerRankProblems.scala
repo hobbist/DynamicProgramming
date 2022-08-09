@@ -405,6 +405,24 @@ object HackerRankProblems extends App {
     lCount
   }
 
+  def superReducedString(s:String):String={
+    val stack:java.util.Stack[Char]=new util.Stack[Char]
+    val deQueue:util.Deque[Char]=new util.LinkedList[Char]()
+    val strBuf:StringBuffer=new StringBuffer()
+    for(c <- s){
+      if(deQueue.getLast==c){
+        deQueue.removeLast()
+      }else{
+        stack.push(c)
+      }
+    }
+    while(!stack.empty()){
+
+
+    }
+    ""
+  }
+
 
   val mat=Array(Array(11,2,4),Array(4,5,6),Array(10, 8, -12))
   val ar=Array(-4, 3, -9, 0, 4, 1)

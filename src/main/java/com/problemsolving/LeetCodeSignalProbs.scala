@@ -1,13 +1,9 @@
 package com.problemsolving
 
-import com.problemsolving.CheckMaxIslandArea.{calculateArea, matrix, maxArea, visited}
-import com.problemsolving.ClosestPlanest.distanceMaps
-import com.problemsolving.ContainsDuplicate.m
-import com.problemsolving.FloodFill.{image, startColor}
 
 import scala.collection.mutable
 import scala.reflect.ClassTag
-import com.dynamicp.adt.{ListNode,TreeNode}
+import com.dynamicp.adt.{ListNode, TreeNode}
 
 object MaxBorders extends App {
 
@@ -1076,5 +1072,37 @@ object findMaxArea extends App {
 
   def findArea(p:(Int,Int),q:(Int,Int)):Int={
     scala.math.abs(q._1-p._1 )* scala.math.min(p._2,q._2)
+  }
+}
+
+object ZigzagPrinter extends App{
+  zigzagPrint("A",1)
+  def zigzagPrint(s: String, numRows: Int):String={
+    var break=0
+    var buf:StringBuffer=new StringBuffer()
+    if(numRows>=s.length) buf.append(s)
+    else {
+      for (i <- 0 until numRows) {
+        var start = i
+        var doBreak = false
+        while (start < s.length) {
+          buf.append(s.charAt(start))
+          start = start + {
+            if (doBreak && break > 0) break else if (numRows == 1) 1 else (2 * numRows - 2 - break)
+          }
+          doBreak = !doBreak
+        }
+        if (i != numRows - 2) break += 2 else break = 0
+      }
+    }
+    
+    buf.toString
+  }
+}
+
+
+object ThreeSum extends App{
+  def getTriplets(in:Array[Int])={
+
   }
 }
